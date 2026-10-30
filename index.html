@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TACO: Tether-Aware Coupled Orienteering of a Catamaran Base and Its Tethered ROV</title>
+<meta name="description" content="TACO plans a catamaran mother ship together with the sampling visits of its tethered ROV under a time budget and an energy budget drawn from one store.">
+<style>
+  :root{
+    --bg:#ffffff; --panel:#f6f7f8; --ink:#1b2a32; --muted:#5b6b73; --line:#e3e7e9;
+    --teal:#20867f; --gold:#a67125; --blue:#397ba5; --hero:#fbf0dd;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0f1517; --panel:#161d20; --ink:#e7edef; --muted:#9fb0b6; --line:#232c30;
+      --teal:#5bb6ad; --gold:#d6a860; --blue:#6fb0d6; --hero:#2a2016;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f1517; --panel:#161d20; --ink:#e7edef; --muted:#9fb0b6; --line:#232c30;
+    --teal:#5bb6ad; --gold:#d6a860; --blue:#6fb0d6; --hero:#2a2016;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 16px}
+  header{padding:54px 16px 30px;text-align:center}
+  h1{font-family:Georgia,"Times New Roman",serif;font-weight:700;line-height:1.22;
+    font-size:clamp(1.45rem,4vw,2.25rem);margin:0 auto;max-width:21em;letter-spacing:-.01em}
+  .venue{color:var(--teal);font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+    font-size:.8rem;margin:0 0 14px}
+  .authors{margin:18px 0 2px;font-size:1.05rem}
+  .authors sup{color:var(--muted)}
+  .note{color:var(--muted);font-size:.9rem;margin:4px auto;max-width:44em}
+  .links{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:24px 0 4px}
+  .links a{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:9px;
+    background:var(--ink);color:var(--bg);text-decoration:none;font-weight:600;font-size:.92rem;
+    border:1px solid var(--ink);transition:transform .08s ease}
+  .links a.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+  .links a:hover{transform:translateY(-1px)}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:30px 0 0}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;text-align:left}
+  .stat b{display:block;font-family:Georgia,"Times New Roman",serif;font-size:1.5rem;color:var(--teal);line-height:1.2}
+  .stat span{color:var(--muted);font-size:.86rem}
+  main{padding:8px 0 40px}
+  section{margin:42px 0}
+  h2{font-family:Georgia,"Times New Roman",serif;font-size:1.3rem;margin:0 0 .5em;
+    padding-bottom:.3em;border-bottom:1px solid var(--line)}
+  p{margin:.7em 0}
+  .abstract{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+  .abstract p{margin:.4em 0;text-align:justify}
+  figure{margin:18px 0 0;text-align:center}
+  figure img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:10px;background:#fff;padding:8px}
+  figure.narrow img{max-width:620px;width:100%}
+  figcaption{color:var(--muted);font-size:.88rem;margin-top:10px;text-align:left}
+  video{width:100%;border-radius:10px;border:1px solid var(--line);background:#000}
+  .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;margin-top:16px}
+  table{border-collapse:collapse;width:100%;font-size:.92rem;min-width:560px}
+  th,td{padding:9px 12px;text-align:center;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  thead th{background:var(--panel);font-weight:600}
+  tbody tr.hero{background:var(--hero)}
+  tbody tr.hero td{font-weight:700;color:var(--ink)}
+  pre{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;
+    overflow-x:auto;font-size:.84rem;line-height:1.5}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  footer{border-top:1px solid var(--line);color:var(--muted);font-size:.86rem;padding:26px 16px 50px;text-align:center}
+  .toggle{position:fixed;top:12px;right:12px;background:var(--panel);border:1px solid var(--line);
+    color:var(--ink);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:.8rem}
+</style>
+</head>
+<body>
+<button class="toggle" id="themeToggle" aria-label="Toggle colour theme">&#9681; theme</button>
+<header>
+  <div class="wrap">
+    <p class="venue">Submitted to the IEEE Transactions on Intelligent Vehicles</p>
+    <h1>Tether-Aware Coupled Orienteering of a Catamaran Base and Its Tethered ROV for Time- and Energy-Bounded Seabed Ore Sampling</h1>
+    <p class="authors">Yuhang Bao<sup>&dagger;</sup> &nbsp;&middot;&nbsp; Jiaqing Wang<sup>&dagger;</sup></p>
+    <p class="note">School of Oceanography, Shanghai Jiao Tong University, Shanghai, China &nbsp;&middot;&nbsp; <sup>&dagger;</sup>Equal contribution</p>
+    <nav class="links">
+      <a href="TACO_manuscript.pdf">&#128196; Paper (PDF)</a>
+      <a class="ghost" href="#video">&#9654; Video</a>
+    </nav>
+    <div class="stats">
+      <div class="stat"><b>+6.2% / +17.0%</b><span>value kept over a fixed catamaran in two PX4 hardware-in-the-loop scenarios</span></div>
+      <div class="stat"><b>48 / 48</b><span>hardware-in-the-loop runs ended within both budgets</span></div>
+      <div class="stat"><b>47.1 vs 44.0</b><span>samples kept on seven field dives at 70% of their budgets, against the fixed base, with 45 for the crew</span></div>
+      <div class="stat"><b>7 / 7</b><span>plans of TACO flown in closed loop on the field dives ended within both budgets</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section>
+    <h2>Abstract</h2>
+    <div class="abstract"><p>Seabed ore sampling by a tethered remotely operated vehicle that works from a mobile catamaran mother ship must fit a time budget and an energy budget drawn from one store on the catamaran. However, the tether couples the two vehicles through a reach that depends on the depth of the vehicle and a drag load that grows with the motion of the catamaran. Therefore, we propose the Tether-Aware Coupled Orienteering planner to plan the motion of the catamaran together with the sampling visits. The planner turns the tether limit into one reach disc per visit and charges the load of a moving tether to the energy of each leg. A convex program places the catamaran waypoints and sets the leg durations of every candidate order of visits. An order search keeps the plan with the largest value weighted by the probability that each visit is completed within both budgets. The planner replans after every sample. We fitted the cost model to simulator legs and to seven field dives of a work-class vehicle, whose 78 sampling stations lasted 581 s on average. In two hardware-in-the-loop scenarios with PX4 on a flight controller, the planner kept 6.2% and 17.0% more sample value than a fixed catamaran. On the field dives with budgets cut to 70%, the planner kept 47.1 samples against 44.0 for a fixed catamaran and 45 for the crew of the dives. These results show that planning the catamaran and the tethered vehicle as one coupled problem raises the value of a budgeted sampling dive.</p></div>
+  </section>
+
+  <section id="video">
+    <h2>Video</h2>
+    <video controls preload="metadata" poster="assets/TACO_cover.jpg">
+      <source src="TACO_video.mp4" type="video/mp4">
+    </video>
+    <p class="note" style="text-align:left;margin-left:0">The narration is synthetic. Subtitles are burned into the video.</p>
+  </section>
+
+  <section>
+    <h2>The coupled sampling task</h2>
+    <figure class="narrow">
+      <img src="assets/fig1.jpg" alt="Catamaran mother ship, tethered ROV and the closed loop of TACO">
+      <figcaption><strong>Tether-Aware Coupled Orienteering (TACO).</strong> A catamaran mother ship of about
+      10,000 t holds station while its tethered work-class ROV samples a seabed site. TACO places the catamaran
+      waypoints inside the reach discs of the visits and sets the leg durations. It weights each visit by its
+      probability of completion within the time budget and the energy budget. After every sample it replans from the
+      measured time and energy. The section joins two Isaac Sim renderings of one instant of a closed-loop flight on a
+      field dive. The map shows the plan and the flight of that dive. The bars give the planned and flown shares of
+      both budgets.</figcaption>
+    </figure>
+    <figure class="narrow">
+      <img src="assets/fig2.jpg" alt="Planning problem with reach discs">
+      <figcaption><strong>Planning problem.</strong> Sites are sized and colored by value. Outlined sites are the
+      visits planned by TACO in their order. Dashed discs are the reach discs of the visits. Squares are the catamaran
+      waypoints. The dotted line is the move with the ROV on deck.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Method</h2>
+    <figure>
+      <img src="assets/fig3.jpg" alt="TACO planner and execution from the mother ship">
+      <figcaption><strong>TACO.</strong> The order search runs under three acceptance rules with projected waypoints.
+      A single-station plan is a fourth candidate. The convex program places the catamaran waypoints and sets the leg
+      durations of an order. The risk-weighted value selects the plan. The executor tracks the plan and returns the
+      measured state after every sample.</figcaption>
+    </figure>
+    <figure class="narrow">
+      <img src="assets/fig4.jpg" alt="Projected and convex catamaran waypoints">
+      <figcaption><strong>Projected and convex waypoints</strong> for one visit order, with the leg energy terms of
+      both.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Experiment design</h2>
+    <figure>
+      <img src="assets/fig5.jpg" alt="Hardware-in-the-loop set-up and three scenarios">
+      <figcaption><strong>Experiment design.</strong> In hardware in the loop a Pixhawk 6C runs PX4 against the native
+      core of NezhaSim2 over the MAVLink messages shown with their rates. The companion computer runs the guidance law,
+      TACO, the return guard and the energy ledger. The columns on the right give the scene, the test field, the
+      sampling durations and the settings of each scenario. Scenarios 1 and 2 test the closed loop at a reduced scale.
+      Scenario 3 uses models fitted to the logs of seven field dives of a work-class ROV.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Hardware in the loop</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Planner</th><th>Scenario 1 kept</th><th>Within budgets</th><th>Scenario 2 kept</th><th>Within budgets</th></tr></thead>
+        <tbody>
+          <tr class="hero"><td>TACO</td><td>33.1</td><td>8/8</td><td>29.0</td><td>8/8</td></tr>
+          <tr><td>Fixed base</td><td>31.2</td><td>8/8</td><td>24.8</td><td>8/8</td></tr>
+          <tr><td>Cluster-route</td><td>19.2</td><td>8/8</td><td>20.2</td><td>8/8</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note" style="text-align:left;margin-left:0">Mean value kept per instance over eight instances per scenario.</p>
+    <figure>
+      <img src="assets/fig6.jpg" alt="Hardware-in-the-loop runs">
+      <figcaption><strong>Hardware-in-the-loop runs.</strong> (a) Paths on one instance of Scenario 1. (b) Value kept
+      on each instance of Scenario 1. (c) Time and energy used by each run of Scenario 2 as shares of the budgets.
+      (d) Value kept on each instance of Scenario 2.</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/fig7.jpg" alt="Mission traces in hardware in the loop">
+      <figcaption><strong>Mission traces.</strong> (a) Depth of the ROV and tether tension on one run of TACO.
+      (b) Time and energy used on the same run, with the end points predicted by its plans. (c) Mean energy of each
+      planner by component. (d) Error of the remaining time and energy predicted at every replan of the 48 runs.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Field dives of a work-class ROV</h2>
+    <figure>
+      <img src="assets/fig8.jpg" alt="Bottom phase of a field dive">
+      <figcaption><strong>Bottom phase of a field dive.</strong> Photographs of the still camera with their times after
+      launch, above the altitude, the open manipulator and tool functions and the estimated hydraulic power. Bands mark
+      the detected sampling stations. The right panel gives the hydraulic power of the seven dives by operating mode.</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/fig9.jpg" alt="Scenario 3 results and closed-loop flights">
+      <figcaption><strong>Scenario 3.</strong> Top row, the station durations, the ship-to-ROV offsets, the held-out
+      prediction of dive duration and energy, and the samples kept. Bottom row, the path flown by TACO against the
+      track of the crew, the height above the seabed, planned against flown shares of the budgets and the split of the
+      dive time.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Ablation, budget level and optimality</h2>
+    <figure class="narrow">
+      <img src="assets/fig10.jpg" alt="Ablation">
+      <figcaption><strong>Ablation.</strong> Change of the value kept against TACO on paired instances, with the mean
+      and its 95% interval.</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/fig11.jpg" alt="Budget level, calibration and optimality">
+      <figcaption><strong>Budget level, calibration and optimality.</strong> (a) Samples kept against the budget level.
+      (b) Calibration of the predicted completion probabilities. (c) Shortfall from the best plan of an exhaustive
+      order search on instances of eight sites. (d) Planning time against the number of sites.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Citation</h2>
+    <pre><code>@article{bao2026taco,
+  title   = {Tether-Aware Coupled Orienteering of a Catamaran Base and Its Tethered
+             {ROV} for Time- and Energy-Bounded Seabed Ore Sampling},
+  author  = {Bao, Yuhang and Wang, Jiaqing},
+  journal = {IEEE Transactions on Intelligent Vehicles (under review)},
+  year    = {2026}
+}</code></pre>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">Project page of the TACO manuscript. Content reflects the submitted version and may change.
+  The BlueROV2 photograph in the experiment-design figure is by Yoleeth under CC BY-SA 4.0. The Pixhawk 6C image comes
+  from the PX4 User Guide under CC BY 4.0.</div>
+</footer>
+
+<script>
+  (function(){
+    var t=document.getElementById('themeToggle');
+    try{var s=localStorage.getItem('taco-theme'); if(s) document.documentElement.setAttribute('data-theme',s);}catch(e){}
+    t.addEventListener('click',function(){
+      var cur=document.documentElement.getAttribute('data-theme');
+      var mql=window.matchMedia('(prefers-color-scheme: dark)');
+      var next=(cur? cur==='dark':mql.matches)?'light':'dark';
+      document.documentElement.setAttribute('data-theme',next);
+      try{localStorage.setItem('taco-theme',next);}catch(e){}
+    });
+  })();
+</script>
+</body>
+</html>
